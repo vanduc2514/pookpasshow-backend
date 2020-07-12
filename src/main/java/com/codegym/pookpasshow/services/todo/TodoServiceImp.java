@@ -2,8 +2,8 @@ package com.codegym.pookpasshow.services.todo;
 
 import com.codegym.pookpasshow.model.Todo;
 import com.codegym.pookpasshow.repositories.TodoRepository;
-import com.codegym.pookpasshow.services.GenericService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -47,8 +47,11 @@ public class TodoServiceImp implements TodoService {
     }
 
     @Override
-    public Todo addOne(Todo model) {
-        return null;
+    public Todo addOne(Todo todo) throws IllegalArgumentException, DataIntegrityViolationException {
+        if (todo.getId() != 0) {
+            throw new IllegalArgumentException();
+        }
+        return todoRepository.save(todo);
     }
 
     @Override

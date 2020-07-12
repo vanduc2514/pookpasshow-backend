@@ -3,3 +3,94 @@ GET http://localhost:8080/todos
 
 ###Get All Todo from Heroku
 GET https://pookpasshow-backend.herokuapp.com/todos
+
+### Post One Valid Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": "dummy title",
+  "content": "dummy content",
+  "completed": false
+}
+
+### Post One with null completed Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": "dummy title with null completed",
+  "content": "dummy content with null completed",
+  "completed": null
+}
+
+### Post One Invalid(id=not null) Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "id": 8,
+  "title": "dummy title",
+  "content": "dummy content",
+  "completed": false
+}
+
+### Post One Invalid(title=null) Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": null,
+  "content": "dummy content",
+  "completed": false
+}
+
+### Post One Invalid(title=empty) Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": "",
+  "content": "dummy content",
+  "completed": false
+}
+
+### Post One Invalid(content=null) Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": "dummy title",
+  "content": null,
+  "completed": false
+}
+
+### Post One Invalid(content="") Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": "dummy title",
+  "content": "",
+  "completed": false
+}
+
+### Post One Invalid(content=null, title = null) Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": null,
+  "content": null,
+  "completed": false
+}
+
+### Post One Invalid(content="", title ="") Todo to Local
+POST http://localhost:8080/todos
+Content-Type: application/json
+
+{
+  "title": "",
+  "content": "",
+  "completed": false
+}
