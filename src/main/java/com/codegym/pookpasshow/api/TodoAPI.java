@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 
@@ -31,6 +32,12 @@ public class TodoAPI {
         return todoService.getAll();
     }
 
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    Todo getOneTodo(@PathVariable("id") int id) throws EntityNotFoundException {
+        return this.todoService.getOne(id);
+    }
+
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     Todo addOneTodo(@Validated @RequestBody Todo todo, Errors errors) throws IllegalArgumentException, DataIntegrityViolationException {
@@ -40,11 +47,31 @@ public class TodoAPI {
         return todoService.addOne(todo);
     }
 
+    @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    Todo patchOneTodo(@Validated @RequestBody Todo todo, Errors errors) {
+        if (errors.hasErrors()) {
+            throw new IllegalArgumentException();
+        }
+        return todoService.updateOne(todo);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public void handleForbiddenException(){}
+    public void handleForbiddenException() {
+    }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void handleNoContentException(){}
+    public void handleNoContentException() {
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void handleNotFoundException() {
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void handleJsonParseErrorException(){}
 }

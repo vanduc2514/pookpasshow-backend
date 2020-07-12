@@ -1,0 +1,54 @@
+###Patch One Valid Todo to Local
+PATCH http://localhost:8080/todos/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "title": "Mua đồ ăn sáng",
+  "content": "Bánh mỳ ruốc + sữa sô cô la",
+  "completed": true
+}
+
+###Patch One Invalid (id=null) to Local
+PATCH http://localhost:8080/todos/1
+Content-Type: application/json
+
+{
+  "id": null,
+  "title": "Mua đồ ăn sáng",
+  "content": "Bánh mỳ ruốc + sữa sô cô la",
+  "completed": true
+}
+
+###Patch One Invalid (id="") to Local
+PATCH http://localhost:8080/todos/1
+Content-Type: application/json
+
+{
+  "id": "",
+  "title": "Mua đồ ăn sáng",
+  "content": "Bánh mỳ ruốc + sữa sô cô la",
+  "completed": true
+}
+
+###Patch One Invalid (id=0) to Local
+PATCH http://localhost:8080/todos/1
+Content-Type: application/json
+
+{
+  "id": 0,
+  "title": "Mua đồ ăn sáng",
+  "content": "Bánh mỳ ruốc + sữa sô cô la",
+  "completed": true
+}
+
+###Patch One Invalid (id=string) to Local
+PATCH http://localhost:8080/todos/1
+Content-Type: application/json
+
+{
+  "id": "string",
+  "title": "Mua đồ ăn sáng",
+  "content": "Bánh mỳ ruốc + sữa sô cô la",
+  "completed": true
+}

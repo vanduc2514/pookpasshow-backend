@@ -1,0 +1,11 @@
+### Get all Todo from Local
+GET http://localhost:8080/todos
+
+###Get All Todo from Heroku
+GET https://pookpasshow-backend.herokuapp.com/todos
+
+###Get One Exist Todo from Local
+GET http://localhost:8080/todos/1
+
+###Get One non-Exist Todo from Local
+GET http://localhost:8080/todos/99

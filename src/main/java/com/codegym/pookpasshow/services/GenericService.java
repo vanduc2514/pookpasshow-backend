@@ -19,7 +19,7 @@ public interface GenericService<T> {
 
     T updateOne(T model);
 
-    T updateOne(int id);
+    T updateOne(int id, T model);
 
     void deleteOne(T model);
 

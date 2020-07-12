@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TodoServiceImp implements TodoService {
@@ -42,8 +44,12 @@ public class TodoServiceImp implements TodoService {
     }
 
     @Override
-    public Todo getOne(int id) {
-        return null;
+    public Todo getOne(int id) throws EntityNotFoundException {
+        Optional<Todo> todoFound = todoRepository.findById(id);
+        if (!todoFound.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+        return todoFound.get();
     }
 
     @Override
@@ -55,12 +61,17 @@ public class TodoServiceImp implements TodoService {
     }
 
     @Override
-    public Todo updateOne(Todo model) {
-        return null;
+    public Todo updateOne(Todo todo) throws EntityNotFoundException {
+        int id = todo.getId();
+        Todo todoFound = getOne(id);
+        todoFound.setTitle(todo.getTitle());
+        todoFound.setContent(todo.getContent());
+        todoFound.setCompleted(todo.isCompleted());
+        return todoRepository.save(todoFound);
     }
 
     @Override
-    public Todo updateOne(int id) {
+    public Todo updateOne(int id, Todo todo) {
         return null;
     }
 
