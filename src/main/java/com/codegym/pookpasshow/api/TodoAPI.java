@@ -61,7 +61,7 @@ public class TodoAPI {
     @ResponseBody
     String deleteOneTodo(@PathVariable("id") int id) {
         todoService.deleteOne(id);
-        return "deleted";
+        return "{\"status\":\"deleted\"}";
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
