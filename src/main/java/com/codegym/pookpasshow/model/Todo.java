@@ -21,6 +21,10 @@ public class Todo {
     private String content;
 
     @Basic
+    @Column(name = "completed", nullable = false)
+    private boolean completed = false;
+
+    @Basic
     @Column(name = "user_id", nullable = false)
     private int userId;
 }
