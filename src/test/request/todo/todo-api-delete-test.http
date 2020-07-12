@@ -1,0 +1,5 @@
+### Delete Exist from Local
+DELETE http://localhost:8080/todos/12
+
+### Delete non exist from Local
+DELETE http://localhost:8080/todos/99
