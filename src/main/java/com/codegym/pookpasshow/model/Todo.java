@@ -27,7 +27,6 @@ public class Todo {
     @Column(name = "completed", nullable = false)
     private boolean completed = false;
 
-    @Basic
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    private Board board;
 }
