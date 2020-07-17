@@ -13,7 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import java.security.InvalidParameterException;
 
 @RestController
-@RequestMapping("/todos")
+@RequestMapping(
+        value = "/todos",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.DELETE}
+)
 public class TodoAPI {
     private TodoService todoService;
 
@@ -22,13 +27,13 @@ public class TodoAPI {
         this.todoService = todoService;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping()
     @ResponseBody
     public Page<Todo> getDefaultTodoPage(Pageable pageable) {
         return todoService.getAll(pageable);
     }
 
-    @GetMapping(params = "page", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(params = "page")
     @ResponseBody
     public Page<Todo> getTodoPage(@RequestParam("page") String page, Pageable pageable) {
         if (!page.matches("\\d+")) {
@@ -37,7 +42,7 @@ public class TodoAPI {
         return todoService.getAll(pageable);
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}")
     @ResponseBody
     public Todo getOneTodo(@PathVariable("id") int id) {
         return todoService.getOne(id);
