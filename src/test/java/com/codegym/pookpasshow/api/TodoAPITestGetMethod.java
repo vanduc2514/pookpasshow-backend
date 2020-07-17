@@ -14,6 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @TestPropertySource("classpath:application.properties")
-public class TodoAPITest {
+public class TodoAPITestGetMethod {
     public static final int SAMPLE_TODO_LIST_SIZE = 10;
     @Autowired
     MockMvc mockMvc;
@@ -59,7 +60,7 @@ public class TodoAPITest {
     }
 
     @Test
-    @DisplayName("/todos trả về page mặc định thứ 1")
+    @DisplayName("/todos trả về page đầu tiên")
     public void getTodoPage() throws Exception {
         pageRequestNumber = 0;
         Pageable defaultPageable = PageRequest.of(pageRequestNumber, defaultPageSize, Sort.unsorted());
@@ -77,28 +78,9 @@ public class TodoAPITest {
     }
 
     @Test
-    @DisplayName("/todos?page=0 trả về page thứ nhất")
+    @DisplayName("/todos?page=0 trả về 1 page")
     public void getTodoPageOne() throws Exception {
         pageRequestNumber = 0;
-        Pageable pageRequest = PageRequest.of(pageRequestNumber, defaultPageSize);
-        when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/todos")
-                .param("page", String.valueOf(pageRequestNumber))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.pageable.paged", is(true)))
-                .andExpect(jsonPath("$.pageable.pageSize", is(defaultPageSize)))
-                .andExpect(jsonPath("$.pageable.pageNumber", is(pageRequestNumber)))
-                .andExpect(jsonPath("$.content", hasSize(defaultPageSize)))
-                .andExpect(jsonPath("$.totalElements", is(SAMPLE_TODO_LIST_SIZE)))
-                .andDo(print());
-    }
-
-    @Test
-    @DisplayName("/todos?page=1 trả về page thứ hai")
-    public void getTodoPageTwo() throws Exception {
-        pageRequestNumber = 1;
         Pageable pageRequest = PageRequest.of(pageRequestNumber, defaultPageSize);
         when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
 
@@ -138,5 +120,35 @@ public class TodoAPITest {
                 .andExpect(jsonPath("$.content", notNullValue()))
                 .andExpect(jsonPath("$.completed", notNullValue()))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/todos/99 trả về Bad Request")
+    public void getBadRequestWithFailedId() throws Exception {
+        int failedID = 99;
+        when(todoService.getOne(99)).thenThrow(new EntityNotFoundException());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", notNullValue()));
+    }
+
+    @Test
+    @DisplayName("/todos/abcdef trả về Not Found")
+    public void getNotFoundWithNonExistURL() throws Exception {
+        String failedUrl = "abcdef";
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedUrl)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("/todos/abcdef/123 trả về Not Found")
+    public void getNotFoundWithNonExistURLTestTwo() throws Exception {
+        String failedValue = "abcdef/123";
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedValue)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
     }
 }

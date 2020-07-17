@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.security.InvalidParameterException;
 
 @RestController
@@ -42,13 +43,15 @@ public class TodoAPI {
         return todoService.getAll(pageable);
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id:\\d+}")
     @ResponseBody
     public Todo getOneTodo(@PathVariable("id") int id) {
         return todoService.getOne(id);
     }
 
-    @ExceptionHandler({InvalidParameterException.class, UnsatisfiedServletRequestParameterException.class})
+    @ExceptionHandler({InvalidParameterException.class,
+            UnsatisfiedServletRequestParameterException.class,
+            EntityNotFoundException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleInvalidParameterException() {
         return "{\"error\":\"invalid parameter\"}";
