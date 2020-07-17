@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -110,11 +110,16 @@ public class TodoAPITest {
     }
 
     @Test
-    @DisplayName("GET Request path variable = 1 trả về Todo id = 1")
+    @DisplayName("/todos/{id} trả về 1 Todo")
     public void getOneTodoTest() throws Exception {
-        when(todoService.getOne(1)).thenReturn(todoList.get(1));
-        mockMvc.perform(MockMvcRequestBuilders.get("/todos/1")
+        int todoId = 1;
+        when(todoService.getOne(todoId)).thenReturn(todoList.get(todoId));
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", todoId)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.id", is(1))).andDo(print());
+                .andExpect(jsonPath("$.id", is(todoId)))
+                .andExpect(jsonPath("$.title", notNullValue()))
+                .andExpect(jsonPath("$.content", notNullValue()))
+                .andExpect(jsonPath("$.completed", notNullValue()))
+                .andDo(print());
     }
 }
