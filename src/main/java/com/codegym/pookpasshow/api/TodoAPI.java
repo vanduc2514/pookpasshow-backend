@@ -43,7 +43,7 @@ public class TodoAPI {
         return todoService.getAll(pageable);
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id:\\d+}")
     @ResponseBody
     public Todo getOneTodo(@PathVariable("id") int id) {
         return todoService.getOne(id);

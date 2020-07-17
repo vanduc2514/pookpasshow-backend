@@ -154,7 +154,7 @@ public class TodoAPITest {
     }
 
     @Test
-    @DisplayName("/todos/abcdef trả về Bad request")
+    @DisplayName("/todos/abcdef trả về Not Found")
     public void getNotSupportTest() throws Exception {
         String failedValue = "abcdef";
         mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedValue)
