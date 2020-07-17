@@ -26,8 +26,4 @@ public class Todo {
     @Basic
     @Column(name = "completed", nullable = false)
     private boolean completed = false;
-
-    @Basic
-    @Column(name = "user_id")
-    private int userId;
 }

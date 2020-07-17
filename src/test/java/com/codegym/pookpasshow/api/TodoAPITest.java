@@ -3,7 +3,6 @@ package com.codegym.pookpasshow.api;
 import com.codegym.pookpasshow.model.Todo;
 import com.codegym.pookpasshow.services.todo.TodoService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,10 @@ public class TodoAPITest {
 
     private static List<Todo> todoList;
 
+    private final int defaultPageSize = 5;
+
+    private int pageRequestNumber;
+
     @BeforeAll
     public static void setUpTodoList() {
         todoList = new LinkedList<>();
@@ -49,35 +52,67 @@ public class TodoAPITest {
         }
     }
 
-    @BeforeEach
-    public void setUpService() {
-//        Page<Todo> todoPage = new PageImpl<>(todoList);
-//        Pageable defaultPageable = PageRequest.of(0, 5, Sort.unsorted());
-//        when(todoService.getAll(ArgumentMatchers.any(Pageable.class))).thenReturn(todoPage);
-        when(todoService.getAll()).thenReturn(todoList);
-        when(todoService.getOne(1)).thenReturn(todoList.get(1));
-    }
-
-    private Page<Todo> getPageFromPageable(Pageable pageable) {
+    private Page<Todo> getPageFromPageRequest(Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), todoList.size());
         return new PageImpl<>(todoList.subList(start, end), pageable, todoList.size());
     }
 
     @Test
-    @DisplayName("GET Request không có page trả về page mặc định ")
+    @DisplayName("/todos trả về page mặc định thứ 1")
     public void getTodoPage() throws Exception {
-        Pageable defaultPageable = PageRequest.of(0, 5, Sort.unsorted());
-        when(todoService.getAll(defaultPageable)).thenReturn(getPageFromPageable(defaultPageable));
+        pageRequestNumber = 0;
+        Pageable defaultPageable = PageRequest.of(pageRequestNumber, defaultPageSize, Sort.unsorted());
+        when(todoService.getAll(defaultPageable)).thenReturn(getPageFromPageRequest(defaultPageable));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/todos")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.content", hasSize(5))).andDo(print());
+                .andExpect(jsonPath("$.pageable.paged", is(true)))
+                .andExpect(jsonPath("$.pageable.pageSize", is(defaultPageSize)))
+                .andExpect(jsonPath("$.pageable.pageNumber", is(pageRequestNumber)))
+                .andExpect(jsonPath("$.content", hasSize(defaultPageSize)))
+                .andExpect(jsonPath("$.totalElements", is(SAMPLE_TODO_LIST_SIZE)))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/todos?page=0 trả về page thứ nhất")
+    public void getTodoPageOne() throws Exception {
+        pageRequestNumber = 0;
+        Pageable pageRequest = PageRequest.of(pageRequestNumber, defaultPageSize);
+        when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos?page=0")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.pageable.paged", is(true)))
+                .andExpect(jsonPath("$.pageable.pageSize", is(defaultPageSize)))
+                .andExpect(jsonPath("$.pageable.pageNumber", is(pageRequestNumber)))
+                .andExpect(jsonPath("$.content", hasSize(defaultPageSize)))
+                .andExpect(jsonPath("$.totalElements", is(SAMPLE_TODO_LIST_SIZE)))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/todos?page=1 trả về page thứ hai")
+    public void getTodoPageTwo() throws Exception {
+        pageRequestNumber = 1;
+        Pageable pageRequest = PageRequest.of(pageRequestNumber, defaultPageSize);
+        when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos?page=1")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.pageable.paged", is(true)))
+                .andExpect(jsonPath("$.pageable.pageSize", is(defaultPageSize)))
+                .andExpect(jsonPath("$.pageable.pageNumber", is(pageRequestNumber)))
+                .andExpect(jsonPath("$.content", hasSize(defaultPageSize)))
+                .andExpect(jsonPath("$.totalElements", is(SAMPLE_TODO_LIST_SIZE)))
+                .andDo(print());
     }
 
     @Test
     @DisplayName("GET Request path variable = 1 trả về Todo id = 1")
     public void getOneTodoTest() throws Exception {
+        when(todoService.getOne(1)).thenReturn(todoList.get(1));
         mockMvc.perform(MockMvcRequestBuilders.get("/todos/1")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id", is(1))).andDo(print());

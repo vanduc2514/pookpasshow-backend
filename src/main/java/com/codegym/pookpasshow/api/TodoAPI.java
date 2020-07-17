@@ -20,7 +20,7 @@ public class TodoAPI {
 
     @GetMapping(params = "page", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Page<Todo> getAllTodo(Pageable pageable) {
+    public Page<Todo> getTodoPage(Pageable pageable) {
         System.out.println(pageable);
         Page<Todo> todoPage = todoService.getAll(pageable);
         System.out.println("Jump into API");
@@ -29,7 +29,7 @@ public class TodoAPI {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Page<Todo> getOnePageTodo(Pageable pageable) {
+    public Page<Todo> getDefaultTodoPage(Pageable pageable) {
         return todoService.getAll(pageable);
     }
 
