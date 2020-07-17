@@ -14,6 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -138,5 +139,17 @@ public class TodoAPITest {
                 .andExpect(jsonPath("$.content", notNullValue()))
                 .andExpect(jsonPath("$.completed", notNullValue()))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/todos/99 trả về status not found")
+    public void getNotFoundTest() throws Exception {
+        int failedID = 99;
+        when(todoService.getOne(99)).thenThrow(new EntityNotFoundException());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedID)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error", notNullValue()));
     }
 }
