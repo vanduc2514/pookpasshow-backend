@@ -3,13 +3,10 @@ package com.codegym.pookpasshow.api;
 import com.codegym.pookpasshow.model.Todo;
 import com.codegym.pookpasshow.services.todo.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/todos")
@@ -21,9 +18,24 @@ public class TodoAPI {
         this.todoService = todoService;
     }
 
+    @GetMapping(params = "page", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Page<Todo> getAllTodo(Pageable pageable) {
+        System.out.println(pageable);
+        Page<Todo> todoPage = todoService.getAll(pageable);
+        System.out.println("Jump into API");
+        return todoPage;
+    }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Todo> getAllTodo() {
-        return todoService.getAll();
+    public Page<Todo> getOnePageTodo(Pageable pageable) {
+        return todoService.getAll(pageable);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Todo getOneTodo(@PathVariable("id") int id) {
+        return todoService.getOne(id);
     }
 }
