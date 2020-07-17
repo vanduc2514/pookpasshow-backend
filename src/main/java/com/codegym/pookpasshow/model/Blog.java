@@ -17,5 +17,5 @@ public class Blog {
     private String content;
 
     @ManyToOne
-    private Board board;
+    private User user;
 }

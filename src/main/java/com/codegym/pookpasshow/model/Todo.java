@@ -28,5 +28,5 @@ public class Todo {
     private boolean completed = false;
 
     @ManyToOne
-    private Board board;
+    private User user;
 }
