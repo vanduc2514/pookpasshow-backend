@@ -40,7 +40,7 @@ public class TodoServiceImp implements TodoService {
 
     @Override
     public Page<Todo> getAll(Pageable pageable) {
-        return null;
+        return todoRepository.findAll(pageable);
     }
 
     @Override
