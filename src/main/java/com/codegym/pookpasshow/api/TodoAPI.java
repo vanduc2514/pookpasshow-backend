@@ -49,15 +49,11 @@ public class TodoAPI {
         return todoService.getOne(id);
     }
 
-    @ExceptionHandler({InvalidParameterException.class, UnsatisfiedServletRequestParameterException.class})
+    @ExceptionHandler({InvalidParameterException.class,
+            UnsatisfiedServletRequestParameterException.class,
+            EntityNotFoundException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleInvalidParameterException() {
         return "{\"error\":\"invalid parameter\"}";
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNotFoundException() {
-        return "{\"error\":\"not exist\"}";
     }
 }

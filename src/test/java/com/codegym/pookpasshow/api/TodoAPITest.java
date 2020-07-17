@@ -142,24 +142,32 @@ public class TodoAPITest {
     }
 
     @Test
-    @DisplayName("/todos/99 trả về status not found")
-    public void getNotFoundTest() throws Exception {
+    @DisplayName("/todos/99 trả về Bad Request")
+    public void getBadRequestWithFailedId() throws Exception {
         int failedID = 99;
         when(todoService.getOne(99)).thenThrow(new EntityNotFoundException());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error", notNullValue()));
     }
 
     @Test
     @DisplayName("/todos/abcdef trả về Not Found")
-    public void getNotSupportTest() throws Exception {
-        String failedValue = "abcdef";
+    public void getNotFoundWithNonExistURL() throws Exception {
+        String failedUrl = "abcdef";
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedUrl)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("/todos/abcdef/123 trả về Not Found")
+    public void getNotFoundWithNonExistURLTestTwo() throws Exception {
+        String failedValue = "abcdef/123";
         mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedValue)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", notNullValue()));
+                .andExpect(status().isNotFound());
     }
 }
