@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.security.InvalidParameterException;
 
 @RestController
@@ -52,5 +53,11 @@ public class TodoAPI {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleInvalidParameterException() {
         return "{\"error\":\"invalid parameter\"}";
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleNotFoundException() {
+        return "{\"error\":\"not exist\"}";
     }
 }
