@@ -26,4 +26,7 @@ public class Todo {
     @Basic
     @Column(name = "completed", nullable = false)
     private boolean completed = false;
+
+    @ManyToOne
+    private User user;
 }
