@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -84,7 +83,8 @@ public class TodoAPITest {
         Pageable pageRequest = PageRequest.of(pageRequestNumber, defaultPageSize);
         when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/todos?page=0")
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos")
+                .param("page", String.valueOf(pageRequestNumber))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pageable.paged", is(true)))
@@ -103,6 +103,7 @@ public class TodoAPITest {
         when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/todos?page=1")
+                .param("page", String.valueOf(pageRequestNumber))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pageable.paged", is(true)))
