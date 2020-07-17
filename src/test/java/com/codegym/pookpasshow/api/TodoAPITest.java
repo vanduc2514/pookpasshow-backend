@@ -152,4 +152,14 @@ public class TodoAPITest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error", notNullValue()));
     }
+
+    @Test
+    @DisplayName("/todos/abcdef trả về Bad request")
+    public void getNotSupportTest() throws Exception {
+        String failedValue = "abcdef";
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos/{id}", failedValue)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", notNullValue()));
+    }
 }
