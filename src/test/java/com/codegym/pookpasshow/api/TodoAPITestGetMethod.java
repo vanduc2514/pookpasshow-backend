@@ -60,7 +60,7 @@ public class TodoAPITestGetMethod {
     }
 
     @Test
-    @DisplayName("/todos trả về page mặc định thứ 1")
+    @DisplayName("/todos trả về page đầu tiên")
     public void getTodoPage() throws Exception {
         pageRequestNumber = 0;
         Pageable defaultPageable = PageRequest.of(pageRequestNumber, defaultPageSize, Sort.unsorted());
@@ -78,28 +78,9 @@ public class TodoAPITestGetMethod {
     }
 
     @Test
-    @DisplayName("/todos?page=0 trả về page thứ nhất")
+    @DisplayName("/todos?page=0 trả về 1 page")
     public void getTodoPageOne() throws Exception {
         pageRequestNumber = 0;
-        Pageable pageRequest = PageRequest.of(pageRequestNumber, defaultPageSize);
-        when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/todos")
-                .param("page", String.valueOf(pageRequestNumber))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.pageable.paged", is(true)))
-                .andExpect(jsonPath("$.pageable.pageSize", is(defaultPageSize)))
-                .andExpect(jsonPath("$.pageable.pageNumber", is(pageRequestNumber)))
-                .andExpect(jsonPath("$.content", hasSize(defaultPageSize)))
-                .andExpect(jsonPath("$.totalElements", is(SAMPLE_TODO_LIST_SIZE)))
-                .andDo(print());
-    }
-
-    @Test
-    @DisplayName("/todos?page=1 trả về page thứ hai")
-    public void getTodoPageTwo() throws Exception {
-        pageRequestNumber = 1;
         Pageable pageRequest = PageRequest.of(pageRequestNumber, defaultPageSize);
         when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
 
