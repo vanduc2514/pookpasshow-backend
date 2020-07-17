@@ -121,11 +121,24 @@ public class TodoAPITest {
         mockMvc.perform(MockMvcRequestBuilders.get("/todos")
                 .param("page", valueToFail)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", notNullValue()));
     }
 
     @Test
-    @DisplayName("/todos/{id} trả về 1 Todo")
+    @DisplayName("/todos?xyz=abc trả về Bad Request")
+    public void getBadRequestWithInvalidParamName() throws Exception {
+        String paramToFail = "xyz";
+        String valueToFail = "abc";
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos")
+                .param(paramToFail, valueToFail)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", notNullValue()));
+    }
+
+    @Test
+    @DisplayName("/todos/1 trả về Todo có id = 1")
     public void getOneTodoTest() throws Exception {
         int todoId = 1;
         when(todoService.getOne(todoId)).thenReturn(todoList.get(todoId));

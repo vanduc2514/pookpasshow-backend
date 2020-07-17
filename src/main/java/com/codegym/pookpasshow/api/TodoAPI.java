@@ -5,8 +5,12 @@ import com.codegym.pookpasshow.services.todo.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.InvalidParameterException;
 
 @RestController
 @RequestMapping("/todos")
@@ -18,15 +22,18 @@ public class TodoAPI {
         this.todoService = todoService;
     }
 
-    @GetMapping(params = "page", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Page<Todo> getTodoPage(Pageable pageable) {
-        return todoService.getAll(pageable);
-    }
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Page<Todo> getDefaultTodoPage(Pageable pageable) {
+        return todoService.getAll(pageable);
+    }
+
+    @GetMapping(params = "page", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Page<Todo> getTodoPage(@RequestParam("page") String page, Pageable pageable) {
+        if (!page.matches("\\d+")) {
+            throw new InvalidParameterException();
+        }
         return todoService.getAll(pageable);
     }
 
@@ -34,5 +41,11 @@ public class TodoAPI {
     @ResponseBody
     public Todo getOneTodo(@PathVariable("id") int id) {
         return todoService.getOne(id);
+    }
+
+    @ExceptionHandler({InvalidParameterException.class, UnsatisfiedServletRequestParameterException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInvalidParameterException() {
+        return "{\"error\":\"invalid parameter\"}";
     }
 }
