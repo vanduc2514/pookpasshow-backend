@@ -102,7 +102,7 @@ public class TodoAPITest {
         Pageable pageRequest = PageRequest.of(pageRequestNumber, defaultPageSize);
         when(todoService.getAll(pageRequest)).thenReturn(getPageFromPageRequest(pageRequest));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/todos?page=1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos")
                 .param("page", String.valueOf(pageRequestNumber))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -112,6 +112,16 @@ public class TodoAPITest {
                 .andExpect(jsonPath("$.content", hasSize(defaultPageSize)))
                 .andExpect(jsonPath("$.totalElements", is(SAMPLE_TODO_LIST_SIZE)))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("/todos?page=abc trả về Bad Request")
+    public void getBadRequestWithInvalidParamTypeTest() throws Exception {
+        String valueToFail = "abc";
+        mockMvc.perform(MockMvcRequestBuilders.get("/todos")
+                .param("page", valueToFail)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
