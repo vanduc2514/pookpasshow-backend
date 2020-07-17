@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @TestPropertySource("classpath:application.properties")
-public class TodoAPITest {
+public class TodoAPITestGetMethod {
     public static final int SAMPLE_TODO_LIST_SIZE = 10;
     @Autowired
     MockMvc mockMvc;
