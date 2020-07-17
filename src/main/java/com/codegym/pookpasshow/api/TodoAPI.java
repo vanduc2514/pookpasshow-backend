@@ -21,10 +21,7 @@ public class TodoAPI {
     @GetMapping(params = "page", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Page<Todo> getTodoPage(Pageable pageable) {
-        System.out.println(pageable);
-        Page<Todo> todoPage = todoService.getAll(pageable);
-        System.out.println("Jump into API");
-        return todoPage;
+        return todoService.getAll(pageable);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
